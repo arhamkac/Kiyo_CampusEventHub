@@ -18,6 +18,7 @@ export const prisma = new PrismaClient();
 import authRoutes from './routes/authRoutes';
 import eventRoutes from './routes/eventRoutes';
 import userRoutes from './routes/userRoutes';
+import calendarRoutes from './routes/calendarRoutes';
 
 // Routes
 app.get('/api/health', (req: Request, res: Response) => {
@@ -27,6 +28,7 @@ app.get('/api/health', (req: Request, res: Response) => {
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/calendars', calendarRoutes);
 
 // Start Server
 app.listen(port, () => {

@@ -4,6 +4,7 @@ import Home from './pages/Home';
 import EventsBrowser from './pages/EventsBrowser';
 import CreateEvent from './pages/CreateEvent';
 import Dashboard from './pages/Dashboard';
+import Calendars from './pages/Calendars';
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <Route path="/events" element={<EventsBrowser />} />
           <Route path="/create" element={<CreateEvent />} />
           <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/calendars" element={<Calendars />} />
         </Routes>
       </main>
       <footer className="border-t border-[var(--border)] py-8 mt-auto bg-white/50 dark:bg-slate-900/50">

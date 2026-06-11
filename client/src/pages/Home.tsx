@@ -37,12 +37,12 @@ export default function Home() {
         </div>
       </motion.div>
 
-      {/* Feature Grid */}
+      {/* Features Grid */}
       <motion.div 
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.8 }}
-        className="grid grid-cols-1 md:grid-cols-3 gap-8 w-full px-4"
+        initial={{ opacity: 0, y: 40 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7, delay: 0.2, ease: "easeOut" }}
+        className="grid grid-cols-1 md:grid-cols-3 gap-12 w-full max-w-6xl mt-16"
       >
         {[
           {

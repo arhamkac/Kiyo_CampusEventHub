@@ -18,6 +18,7 @@ model User {
   
   events       Event[]  @relation("EventOrganizer")
   rsvps        RSVP[]
+  calendars    Calendar[]
 }
 
 model Event {
@@ -48,4 +49,27 @@ model RSVP {
   user         User     @relation(fields: [userId], references: [id])
 
   @@unique([eventId, userId])
+}
+
+model Calendar {
+  id        String   @id @default(uuid())
+  name      String
+  color     String   @default("#4f46e5")
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  events    CalendarEvent[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CalendarEvent {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  startTime   DateTime
+  endTime     DateTime
+  calendarId  String
+  calendar    Calendar @relation(fields: [calendarId], references: [id], onDelete: Cascade)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }

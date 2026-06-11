@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMyCalendar = exports.rsvpEvent = exports.getEventById = exports.getEvents = exports.createEvent = void 0;
+exports.getMyCalendar = exports.rsvpEvent = exports.getEventById = exports.getEvents = exports.updateEvent = exports.deleteEvent = exports.createEvent = void 0;
 const index_1 = require("../index");
 const createEvent = async (req, res) => {
     try {
@@ -14,7 +14,7 @@ const createEvent = async (req, res) => {
                 startTime: new Date(startTime),
                 endTime: new Date(endTime),
                 location,
-                capacity: parseInt(capacity, 10),
+                capacity: typeof capacity === 'number' ? capacity : parseInt(capacity, 10),
                 organizerId,
                 imageUrl,
             },
@@ -22,11 +22,63 @@ const createEvent = async (req, res) => {
         res.status(201).json(newEvent);
     }
     catch (error) {
-        console.error(error);
+        console.error("CREATE EVENT ERROR:", error);
         res.status(500).json({ message: 'Error creating event' });
     }
 };
 exports.createEvent = createEvent;
+const deleteEvent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.id;
+        const event = await index_1.prisma.event.findUnique({ where: { id } });
+        if (!event) {
+            res.status(404).json({ message: 'Event not found' });
+            return;
+        }
+        if (event.organizerId !== userId && req.user.role !== 'ADMIN') {
+            res.status(403).json({ message: 'Forbidden' });
+            return;
+        }
+        await index_1.prisma.event.delete({ where: { id } });
+        res.status(200).json({ message: 'Event deleted successfully' });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({ message: 'Error deleting event' });
+    }
+};
+exports.deleteEvent = deleteEvent;
+const updateEvent = async (req, res) => {
+    try {
+        const id = req.params.id;
+        const userId = req.user.id;
+        const { title, capacity, imageUrl } = req.body;
+        const event = await index_1.prisma.event.findUnique({ where: { id } });
+        if (!event) {
+            res.status(404).json({ message: 'Event not found' });
+            return;
+        }
+        if (event.organizerId !== userId && req.user.role !== 'ADMIN') {
+            res.status(403).json({ message: 'Forbidden' });
+            return;
+        }
+        await index_1.prisma.event.update({
+            where: { id },
+            data: {
+                title: title || event.title,
+                capacity: typeof capacity === 'number' ? capacity : parseInt(capacity, 10),
+                imageUrl: imageUrl !== undefined ? imageUrl : event.imageUrl
+            }
+        });
+        res.status(200).json({ message: 'Event updated' });
+    }
+    catch (error) {
+        console.error("UPDATE EVENT ERROR:", error);
+        res.status(500).json({ message: 'Error updating event' });
+    }
+};
+exports.updateEvent = updateEvent;
 const getEvents = async (req, res) => {
     try {
         const { category, search } = req.query;

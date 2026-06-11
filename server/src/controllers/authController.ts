@@ -135,6 +135,7 @@ export const firebaseLogin = async (req: Request, res: Response): Promise<void> 
         });
       }
     } catch (dbError) {
+      console.error("Prisma DB Error during login:", dbError);
       console.warn("Database connection failed. Generating mock user session for testing.");
       user = {
         id: "mock_id_123",

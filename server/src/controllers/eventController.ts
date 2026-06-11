@@ -21,7 +21,7 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
         startTime: new Date(startTime),
         endTime: new Date(endTime),
         location,
-        capacity: parseInt(capacity, 10),
+        capacity: typeof capacity === 'number' ? capacity : parseInt(capacity, 10),
         organizerId,
         imageUrl,
       },
@@ -29,8 +29,64 @@ export const createEvent = async (req: AuthRequest, res: Response): Promise<void
 
     res.status(201).json(newEvent);
   } catch (error) {
-    console.error(error);
+    console.error("CREATE EVENT ERROR:", error);
     res.status(500).json({ message: 'Error creating event' });
+  }
+};
+
+export const deleteEvent = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    const userId = req.user!.id;
+    const event = await prisma.event.findUnique({ where: { id } });
+    if (!event) {
+      res.status(404).json({ message: 'Event not found' });
+      return;
+    }
+
+    if (event.organizerId !== userId && req.user!.role !== 'ADMIN') {
+      res.status(403).json({ message: 'Forbidden' });
+      return;
+    }
+
+    await prisma.event.delete({ where: { id } });
+    res.status(200).json({ message: 'Event deleted successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: 'Error deleting event' });
+  }
+};
+
+export const updateEvent = async (req: AuthRequest, res: Response): Promise<void> => {
+  try {
+    const id = req.params.id as string;
+    const userId = req.user!.id;
+    const { title, capacity, imageUrl } = req.body;
+
+    const event = await prisma.event.findUnique({ where: { id } });
+    if (!event) {
+      res.status(404).json({ message: 'Event not found' });
+      return;
+    }
+
+    if (event.organizerId !== userId && req.user!.role !== 'ADMIN') {
+      res.status(403).json({ message: 'Forbidden' });
+      return;
+    }
+
+    await prisma.event.update({
+      where: { id },
+      data: { 
+        title: title || event.title,
+        capacity: typeof capacity === 'number' ? capacity : parseInt(capacity, 10),
+        imageUrl: imageUrl !== undefined ? imageUrl : event.imageUrl
+      }
+    });
+    
+    res.status(200).json({ message: 'Event updated' });
+  } catch (error) {
+    console.error("UPDATE EVENT ERROR:", error);
+    res.status(500).json({ message: 'Error updating event' });
   }
 };
 

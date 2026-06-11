@@ -10,6 +10,7 @@ export default function Navbar() {
   const navLinks = [
     { name: 'Events', path: '/events' },
     { name: 'Dashboard', path: '/dashboard' },
+    { name: 'Calendars', path: '/calendars' },
   ];
 
   return (

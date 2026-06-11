@@ -19,6 +19,7 @@ exports.prisma = new client_1.PrismaClient();
 const authRoutes_1 = __importDefault(require("./routes/authRoutes"));
 const eventRoutes_1 = __importDefault(require("./routes/eventRoutes"));
 const userRoutes_1 = __importDefault(require("./routes/userRoutes"));
+const calendarRoutes_1 = __importDefault(require("./routes/calendarRoutes"));
 // Routes
 app.get('/api/health', (req, res) => {
     res.json({ status: 'ok', message: 'Kiyo Campus Event Hub API is running!' });
@@ -26,6 +27,7 @@ app.get('/api/health', (req, res) => {
 app.use('/api/auth', authRoutes_1.default);
 app.use('/api/events', eventRoutes_1.default);
 app.use('/api/users', userRoutes_1.default);
+app.use('/api/calendars', calendarRoutes_1.default);
 // Start Server
 app.listen(port, () => {
     console.log(`Server is running on port ${port}`);
